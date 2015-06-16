@@ -1,0 +1,20 @@
+{
+  "name": "scaffolar",
+  "version": "0.1.0",
+  "homepage": "https://github.com/xtiam57/scaffolar",
+  "authors": [
+    "Christiam Mena <christiam.mena@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "~3.3.1",
+    "font-awesome": "~4.2.0"
+  }
+}
