@@ -149,11 +149,9 @@ gulp.task('injectBowerDep', function () {
                  .pipe(js)                                  // Select only .js assets
                  .pipe($.uglify())                                           // Uglify or other changes
                  .pipe(js.restore())                        // Rollback js filter
-                 // .pipe($.rev())                          // Rename vendor.js and vendor.js files
                  .pipe(assets.restore())                    // Restore all assets
                  .pipe($.useref())                          // Make changes in the html file links and script
-                 // .pipe($.revReplace())                   // Update in files the correct name change by rev()
-                 .pipe(gulp.dest('./src'));   // Save ides.html, vendor.js and vendor.js files
+                 .pipe(gulp.dest('./dist'));   // Save ides.html, vendor.js and vendor.js files
 });
 
 
@@ -194,8 +192,14 @@ gulp.task('watch', function(){
 // Process Task delete folder dist  //
 ///////////////////////////
 
-gulp.task('delete',function(){
+gulp.task('clear',function(){
     $.del(['dist'], function (err, paths) {
+        console.log('Deleted folder dist');
+    });
+});
+
+gulp.task('clear-all',function(){
+    $.del(['dist', 'node_modules', 'bower_components'], function (err, paths) {
         console.log('Deleted folder dist');
     });
 });
