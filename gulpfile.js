@@ -4,7 +4,7 @@
 //////////////////////
 var development = 'DEV',        // Development's tag name
     distribution = 'DIST';      // Distribution's tag name
-
+    distFolderName = 'dist';    // Dist Folder Name
 ///////////////////////////
 // Environment variables //
 ///////////////////////////
@@ -20,18 +20,27 @@ var $ = require('gulp-load-plugins')({
 });
 
 
+//////////////////////
+// OnError function //
+//////////////////////
+
+var onError = function(err) {
+        console.log(err);
+        $.util.beep(); };
+
 ////////////////////////////////////////////////////////
 // sourcemap, concats, uglifies, sufix .min and write //
 ////////////////////////////////////////////////////////
 
 function processJS(path, name){
     gulp.src(path)
+        .pipe($.plumber({ errorHandler: onError }))
         .pipe($.if(isDevelopment(), $.sourcemaps.init()))
         .pipe($.concat(name + '.js', { }))
         .pipe($.uglify())
         .pipe($.rename({ suffix: '.min' }))
         .pipe($.if(isDevelopment(), $.sourcemaps.write()))
-        .pipe(gulp.dest('dist/js'))
+        .pipe(gulp.dest(distFolderName+'/js'))
         .pipe($.browserSync.reload({ stream: true }));
 };
 
@@ -42,13 +51,14 @@ function processJS(path, name){
 ////////////////////////////////////////////////////////
 function processCSS(path, name){
     gulp.src(path)
+        .pipe($.plumber({ errorHandler: onError }))
         .pipe($.if(isDevelopment(), $.sourcemaps.init()))
         .pipe($.concat(name + '.css', { }))
         .pipe($.less())
         .pipe($.minifyCss({compatibility: 'ie8'}))
         .pipe($.rename({ suffix: '.min' }))
         .pipe($.if(isDevelopment(), $.sourcemaps.write()))
-        .pipe(gulp.dest('dist/css'))
+        .pipe(gulp.dest(distFolderName+'/css'))
         .pipe($.browserSync.reload({ stream: true }));
 };
 
@@ -75,7 +85,8 @@ gulp.task('less', function(){
 ///////////////////////////////
 gulp.task('fonts', function(){
     gulp.src('src/assets/fonts/**')
-        .pipe(gulp.dest('dist/fonts'))
+        .pipe($.plumber({ errorHandler: onError }))
+        .pipe(gulp.dest(distFolderName+'/fonts'))
         .pipe($.browserSync.reload({ stream: true }));
 });
 
@@ -85,7 +96,8 @@ gulp.task('fonts', function(){
 ////////////////////////////////
 gulp.task('images', function(){
     gulp.src('src/assets/images/**')
-        .pipe(gulp.dest('dist/images'))
+        .pipe($.plumber({ errorHandler: onError }))
+        .pipe(gulp.dest(distFolderName+'/images'))
         .pipe($.browserSync.reload({ stream: true }));
 });
 
@@ -95,7 +107,8 @@ gulp.task('images', function(){
 ///////////////////////////////
 gulp.task('icons', function(){
     gulp.src('src/assets/icons/**')
-        .pipe(gulp.dest('dist/icons'))
+        .pipe($.plumber({ errorHandler: onError }))
+        .pipe(gulp.dest(distFolderName+'/icons'))
         .pipe($.browserSync.reload({ stream: true }));
 });
 
@@ -113,7 +126,8 @@ gulp.task('assets',function(){
 ///////////////////////////////////////////
 gulp.task('html', function(){
     gulp.src('src/*.html')
-        .pipe(gulp.dest('./dist'))
+        .pipe($.plumber({ errorHandler: onError }))
+        .pipe(gulp.dest('./'+distFolderName))
         .pipe($.browserSync.reload({ stream: true }));
 });
 
@@ -123,6 +137,7 @@ gulp.task('html', function(){
 ////////////////////////////
 gulp.task('bower',function(){
     return gulp.src('src/*.html')
+               .pipe($.plumber({ errorHandler: onError }))
                .pipe(wiredep({
                     directory: 'bower_components',
                     exclude: []
@@ -140,7 +155,8 @@ gulp.task('injectBowerDep', function () {
     var css = $.filter('**/*.css'),
         js  = $.filter('**/*.js'),
         assets = $.useref.assets(),
-        stream = gulp.src('src/*.html');
+        stream = gulp.src('src/*.html')
+                     .pipe($.plumber({ errorHandler: onError }));
 
     return stream.pipe(assets)                              // Select all assets in the 'build' tag in the html file
                  .pipe(css)                                 // Select only .css assets
@@ -151,7 +167,7 @@ gulp.task('injectBowerDep', function () {
                  .pipe(js.restore())                        // Rollback js filter
                  .pipe(assets.restore())                    // Restore all assets
                  .pipe($.useref())                          // Make changes in the html file links and script
-                 .pipe(gulp.dest('./dist'));   // Save ides.html, vendor.js and vendor.js files
+                 .pipe(gulp.dest('./'+distFolderName));   // Save ides.html, vendor.js and vendor.js files
 });
 
 
@@ -168,7 +184,7 @@ gulp.task('connect', function(){
 
     $.browserSync({
         server:{
-            baseDir: ['dist'],
+            baseDir: [distFolderName],
             routes: routes
         }
     });
@@ -193,13 +209,13 @@ gulp.task('watch', function(){
 ///////////////////////////
 
 gulp.task('clear',function(){
-    $.del(['dist'], function (err, paths) {
+    $.del([distFolderName], function (err, paths) {
         console.log('Deleted folder dist');
     });
 });
 
 gulp.task('clear-all',function(){
-    $.del(['dist', 'node_modules', 'bower_components'], function (err, paths) {
+    $.del([distFolderName, 'node_modules', 'bower_components'], function (err, paths) {
         console.log('Deleted folder dist');
     });
 });
