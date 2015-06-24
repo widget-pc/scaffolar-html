@@ -16,7 +16,7 @@ function isDistribution() { return ENV === distribution; }
 var gulp = require('gulp');
 var wiredep = require('wiredep').stream;
 var $ = require('gulp-load-plugins')({
-    pattern: ['gulp-*','del', 'browser-sync']
+    pattern: ['gulp-*','del', 'browser-sync','bower']
 });
 
 
@@ -191,6 +191,23 @@ gulp.task('connect', function(){
 });
 
 
+/////////////////////////////
+// Process Task bower-json //
+/////////////////////////////
+
+gulp.task('bower-json-install', function(cb){
+  gulp.src('bower.json').pipe($.plumber())
+    $.bower.commands.install([], {save: true}, {})
+    .on('end', function(installed){
+      cb();
+      $.runSequence('bower','html');
+      $.browserSync.reload({ stream: true });
+    });
+    console.log('call task bower-json-install');
+});
+
+
+
 ////////////////////////////////////////////////////////
 // Process Task wacth in the files: less, html, assets//
 ////////////////////////////////////////////////////////
@@ -201,6 +218,7 @@ gulp.task('watch', function(){
     gulp.watch('src/assets/fonts/**/*', ['fonts']);
     gulp.watch('src/assets/icons/**/*', ['icons']);
     gulp.watch('src/assets/images/**/*', ['images']);
+    gulp.watch('bower.json',['bower-json-install']);
 });
 
 
