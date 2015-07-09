@@ -1,3 +1,7 @@
+/////////////////////////////////
+// Include custom-bower-main.js //
+/////////////////////////////////
+
 
 //////////////////////
 // Convention names //
@@ -18,6 +22,7 @@ var wiredep = require('wiredep').stream;
 var $ = require('gulp-load-plugins')({
     pattern: ['gulp-*','del', 'browser-sync','bower']
 });
+
 
 
 //////////////////////
@@ -44,6 +49,19 @@ function processJS(path, name){
         .pipe($.browserSync.reload({ stream: true }));
 };
 
+
+////////////////////////////////
+// Overrides Bower Main Array //
+////////////////////////////////
+var overridesComp = {
+
+    bootstrap: {
+        main: [
+            "./dist/css/bootstrap.css",
+            "./dist/js/bootstrap.js"
+        ]
+    }
+};
 
 
 ////////////////////////////////////////////////////////
@@ -139,12 +157,12 @@ gulp.task('bower',function(){
     return gulp.src('src/*.html')
                .pipe($.plumber({ errorHandler: onError }))
                .pipe(wiredep({
+                    overrides: overridesComp,
                     directory: 'bower_components',
                     exclude: []
                }))
                .pipe(gulp.dest('./src'))
 });
-
 
 
 //////////////////////////////////////////////////////////////////
@@ -243,6 +261,9 @@ gulp.task('clear-all',function(){
 // main Tasks //
 ////////////////
 gulp.task('default',function(){
+    // var a = gulp.src("custom-bower-main.js").pipe($.include());
+
+    // console.log(a.test_variable);
     $.runSequence(['js','less','assets'], 'bower', 'html', 'connect', 'watch');
 });
 

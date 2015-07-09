@@ -27,7 +27,8 @@
     "gulp-useref": "~1.0.2",
     "browser-sync": "^2.7.10",
     "gulp-plumber": "~1.0.0",
-    "gulp-util":  "~3.0.3"
+    "gulp-util":  "~3.0.3",
+    "gulp-include": "2.0.2"
   },
 
   "dependencies":{
