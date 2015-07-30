@@ -1,84 +1,110 @@
-/////////////////////////////////
-// Include custom-bower-main.js //
-/////////////////////////////////
-
+/* Desarrollado por Widget Personal Computer C.A. */
+/* VERTION: 0.5.0 */
 
 //////////////////////
 // Convention names //
 //////////////////////
-var development = 'DEV',        // Development's tag name
-    distribution = 'DIST';      // Distribution's tag name
-    distFolderName = 'dist';    // Dist Folder Name
-///////////////////////////
-// Environment variables //
-///////////////////////////
-var ENV = development;
-
-function isDevelopment() { return ENV === development; }
-function isDistribution() { return ENV === distribution; }
-
-var gulp = require('gulp');
-var wiredep = require('wiredep').stream;
-var $ = require('gulp-load-plugins')({
-    pattern: ['gulp-*','del', 'browser-sync','bower']
-});
-
-
-
-//////////////////////
-// OnError function //
-//////////////////////
-
-var onError = function(err) {
-        console.log(err);
-        $.util.beep(); };
-
-////////////////////////////////////////////////////////
-// sourcemap, concats, uglifies, sufix .min and write //
-////////////////////////////////////////////////////////
-
-function processJS(path, name){
-    gulp.src(path)
-        .pipe($.plumber({ errorHandler: onError }))
-        .pipe($.if(isDevelopment(), $.sourcemaps.init()))
-        .pipe($.concat(name + '.js', { }))
-        .pipe($.uglify())
-        .pipe($.rename({ suffix: '.min' }))
-        .pipe($.if(isDevelopment(), $.sourcemaps.write()))
-        .pipe(gulp.dest(distFolderName+'/js'))
-        .pipe($.browserSync.reload({ stream: true }));
-};
+var development = 'DEV',        			// Development's tag name
+    distribution = 'DIST',      			// Distribution's tag name
+    distFolderName = 'scaffolar-html',    	// Dist Folder Name
+    ugly_minify = false,         			// Value of uglyfi files js and css.
+    isBuild = false;						// Value to call browserSync.reload task
 
 
 ////////////////////////////////
 // Overrides Bower Main Array //
 ////////////////////////////////
 var overridesComp = {
+};
 
-    bootstrap: {
-        main: [
-            "./dist/css/bootstrap.css",
-            "./dist/js/bootstrap.js"
-        ]
-    }
+//////////////////////////
+// Environment variables //
+///////////////////////////
+var ENV = development;distribution
+
+function isDevelopment() { return ENV === development; }
+function isDistribution() { return ENV === distribution; }
+
+var gulp = require('gulp');
+var wiredep = require('wiredep').stream;
+
+var $ = require('gulp-load-plugins')({
+    pattern: ['gulp-*','del', 'browser-sync', 'main-bower-files','bower', 'imagemin-pngquant']
+});
+
+
+////////////////////////////////////////////////////////
+// sourcemap, concats, uglifies, sufix .min and write //
+////////////////////////////////////////////////////////
+function processJS(path, name){
+	var source = gulp.src(path)
+    	.pipe($.plumber())
+        .pipe($.if(isDevelopment(), $.sourcemaps.init()))
+        .pipe($.concat(name + '.js', { }))
+        .pipe($.if(ugly_minify, $.uglify()))
+		.pipe($.rename({ suffix: '.min' }))
+		.pipe($.if(isDevelopment(), $.sourcemaps.write()))
+		.pipe(gulp.dest(distFolderName+'/js'));
+		
+		if(isDevelopment())
+        	$.browserSync.reload();
+};
+
+
+
+////////////////////////////////////////////////////////
+// sourcemap, concats, uglifies, sufix .min and write //
+////////////////////////////////////////////////////////
+function processLess(path, name){
+    var source = gulp.src(path)
+    	.pipe($.plumber())
+        .pipe($.if(isDevelopment(), $.sourcemaps.init()))
+        .pipe($.concat(name + '.css', { }))
+        .pipe($.less())
+        .pipe($.autoprefixer(
+			'last 2 version',
+			'> 1%',
+			'ie 8',
+			'ie 9',
+			'ios 6',
+			'android 4'
+        ))
+        .pipe($.if(ugly_minify, $.minifyCss({compatibility: 'ie8'})))
+        .pipe($.rename({ suffix: '.min' }))
+        .pipe($.if(isDevelopment(), $.sourcemaps.write()))
+        .pipe($.size())
+        .pipe(gulp.dest(distFolderName+'/css'));
+
+        if(isDevelopment())
+        	$.browserSync.reload();
 };
 
 
 ////////////////////////////////////////////////////////
 // sourcemap, concats, uglifies, sufix .min and write //
 ////////////////////////////////////////////////////////
-function processCSS(path, name){
-    gulp.src(path)
-        .pipe($.plumber({ errorHandler: onError }))
-        .pipe($.if(isDevelopment(), $.sourcemaps.init()))
+function processClearLess(path, name){
+    var source = gulp.src(path)
+    	.pipe($.plumber())
+        // .pipe($.if(isDevelopment(), $.sourcemaps.init()))
         .pipe($.concat(name + '.css', { }))
         .pipe($.less())
-        .pipe($.minifyCss({compatibility: 'ie8'}))
+        .pipe($.autoprefixer(
+			'last 2 version',
+			'> 1%',
+			'ie 8',
+			'ie 9',
+			'ios 6',
+			'android 4'
+        ))
+        .pipe($.if(ugly_minify, $.minifyCss({compatibility: 'ie8'})))
         .pipe($.rename({ suffix: '.min' }))
-        .pipe($.if(isDevelopment(), $.sourcemaps.write()))
-        .pipe(gulp.dest(distFolderName+'/css'))
-        .pipe($.browserSync.reload({ stream: true }));
+        // .pipe($.if(isDevelopment(), $.sourcemaps.write()))
+        .pipe($.size())
+        .pipe(gulp.dest(distFolderName+'/css'));
 };
+
+
 
 
 ///////////////////////////
@@ -94,18 +120,33 @@ gulp.task('js', function(){
 // Process all LESS files  //
 /////////////////////////////
 gulp.task('less', function(){
-    processCSS('src/less/vendors.less', 'vendors');
-    processCSS('src/less/theme.less', 'theme');
+    processLess('src/less/vendors.less', 'vendors');
+    processLess('src/less/theme.less', 'theme');
+});
+
+
+/////////////////////////////
+// Process all LESS files  //
+/////////////////////////////
+gulp.task('build-clear-less', function(){
+    processClearLess('src/less/clear.less', 'clear');
 });
 
 ///////////////////////////////
 // Process all FONTS files   //
 ///////////////////////////////
 gulp.task('fonts', function(){
-    gulp.src('src/assets/fonts/**')
-        .pipe($.plumber({ errorHandler: onError }))
-        .pipe(gulp.dest(distFolderName+'/fonts'))
-        .pipe($.browserSync.reload({ stream: true }));
+	var files = $.mainBowerFiles();
+	files.push('src/assets/fonts/**');
+
+    var source = gulp.src(files)
+    	.pipe($.plumber())
+    	.pipe($.filter('**/*.{eot,svg,ttf,woff,woff2,otf}'))
+    	.pipe($.size())
+        .pipe(gulp.dest(distFolderName+'/fonts'));
+
+        if(isDevelopment())
+        	$.browserSync.reload();
 });
 
 
@@ -113,10 +154,25 @@ gulp.task('fonts', function(){
 // Process all IMAGES files   //
 ////////////////////////////////
 gulp.task('images', function(){
-    gulp.src('src/assets/images/**')
-        .pipe($.plumber({ errorHandler: onError }))
-        .pipe(gulp.dest(distFolderName+'/images'))
-        .pipe($.browserSync.reload({ stream: true }));
+
+	$.cache.clearAll();
+
+    var files = $.mainBowerFiles();
+    files.push('src/assets/images/**/*.{png,jpg,jpeg,svg,gif}');
+	
+    var source = gulp.src(files)
+        .pipe($.plumber())
+        .pipe($.filter('**/*.{png,jpg,jpeg,svg,gif}'))
+        // .pipe($.imagemin({
+        //     progressive: true,
+        //     svgoPlugins: [{removeViewBox: false}],
+        //     use: [$.imageminPngquant()]
+        // }))
+        .pipe($.size())
+        .pipe(gulp.dest(distFolderName + '/images'));
+
+        if(isDevelopment())
+        	$.browserSync.reload();
 });
 
 
@@ -124,10 +180,26 @@ gulp.task('images', function(){
 // Process all ICONS files   //
 ///////////////////////////////
 gulp.task('icons', function(){
-    gulp.src('src/assets/icons/**')
-        .pipe($.plumber({ errorHandler: onError }))
-        .pipe(gulp.dest(distFolderName+'/icons'))
-        .pipe($.browserSync.reload({ stream: true }));
+    var source = gulp.src('src/assets/icons/*.ico')
+    	.pipe($.plumber())
+    	.pipe($.size())
+        .pipe(gulp.dest(distFolderName+'/icons'));
+        
+        if(isDevelopment())
+        	$.browserSync.reload();
+});
+
+//////////////////////////////////
+// Process all Files like PDF   //
+//////////////////////////////////
+gulp.task('files', function(){
+    var source = gulp.src('src/assets/files/**/*.*')
+    	.pipe($.plumber())
+    	.pipe($.size())
+        .pipe(gulp.dest(distFolderName+'/files'));
+        
+        if(isDevelopment())
+        	$.browserSync.reload();
 });
 
 
@@ -135,7 +207,7 @@ gulp.task('icons', function(){
 // Delete the idstribution folder  //
 /////////////////////////////////////
 gulp.task('assets',function(){
-  $.runSequence(['fonts','images','icons']);
+	$.runSequence(['fonts','images','icons', 'files']);
 });
 
 
@@ -143,10 +215,13 @@ gulp.task('assets',function(){
 // Copy html to the distribution folder  //
 ///////////////////////////////////////////
 gulp.task('html', function(){
-    gulp.src('src/*.html')
-        .pipe($.plumber({ errorHandler: onError }))
-        .pipe(gulp.dest('./'+distFolderName))
-        .pipe($.browserSync.reload({ stream: true }));
+    var source = gulp.src('src/*.html')
+    	.pipe($.plumber())
+    	.pipe($.size())
+        .pipe(gulp.dest('./'+distFolderName));
+        
+        if(isDevelopment())
+        	$.browserSync.reload();
 });
 
 
@@ -155,14 +230,15 @@ gulp.task('html', function(){
 ////////////////////////////
 gulp.task('bower',function(){
     return gulp.src('src/*.html')
-               .pipe($.plumber({ errorHandler: onError }))
+    		   .pipe($.plumber())
                .pipe(wiredep({
-                    overrides: overridesComp,
+	               	overrides: overridesComp,
                     directory: 'bower_components',
                     exclude: []
                }))
                .pipe(gulp.dest('./src'))
 });
+
 
 
 //////////////////////////////////////////////////////////////////
@@ -173,10 +249,10 @@ gulp.task('injectBowerDep', function () {
     var css = $.filter('**/*.css'),
         js  = $.filter('**/*.js'),
         assets = $.useref.assets(),
-        stream = gulp.src('src/*.html')
-                     .pipe($.plumber({ errorHandler: onError }));
+        stream = gulp.src('src/*.html');
 
-    return stream.pipe(assets)                              // Select all assets in the 'build' tag in the html file
+    return stream.pipe($.plumber())
+    			 .pipe(assets)                              // Select all assets in the 'build' tag in the html file
                  .pipe(css)                                 // Select only .css assets
                  .pipe($.minifyCss({compatibility: 'ie8'})) // Minify or other changes
                  .pipe(css.restore())                       // Rollback css filter
@@ -202,28 +278,24 @@ gulp.task('connect', function(){
 
     $.browserSync({
         server:{
-            baseDir: [distFolderName],
-            routes: routes
+            baseDir: ['src', distFolderName],
+            routes: routes 
         }
     });
 });
-
 
 /////////////////////////////
 // Process Task bower-json //
 /////////////////////////////
 
 gulp.task('bower-json-install', function(cb){
-  gulp.src('bower.json').pipe($.plumber())
     $.bower.commands.install([], {save: true}, {})
     .on('end', function(installed){
-      cb();
-      $.runSequence('bower','html');
-      $.browserSync.reload({ stream: true });
+		cb();
+		$.runSequence('bower','html');
+		$.browserSync.reload();
     });
-    console.log('call task bower-json-install');
 });
-
 
 
 ////////////////////////////////////////////////////////
@@ -233,27 +305,46 @@ gulp.task('watch', function(){
     gulp.watch('src/less/**/*.less', ['less']);
     gulp.watch('src/*.html', ['html']);
     gulp.watch('src/scripts/**/*.js', ['js']);
-    gulp.watch('src/assets/fonts/**/*', ['fonts']);
-    gulp.watch('src/assets/icons/**/*', ['icons']);
-    gulp.watch('src/assets/images/**/*', ['images']);
+    gulp.watch('src/assets/fonts/**/*.{eot,svg,ttf,woff,woff2,otf}', ['fonts']);
+    gulp.watch('src/assets/icons/**/*.ico', ['icons']);
+    gulp.watch('src/assets/files/**/*.*', ['files']);
+    gulp.watch('src/assets/images/**/*{.png, .jpg, .jpeg, .svg, .gif}', ['images']);
     gulp.watch('bower.json',['bower-json-install']);
 });
 
 
-///////////////////////////
+
+//////////////////////////////////////
 // Process Task delete folder dist  //
-///////////////////////////
+//////////////////////////////////////
 
 gulp.task('clear',function(){
-    $.del([distFolderName], function (err, paths) {
-        console.log('Deleted folder dist');
+    $.del([distFolderName, 'dist'], function (err, paths) {
+        console.log('Deleted folder dist and ' + distFolderName);
     });
 });
 
 gulp.task('clear-all',function(){
-    $.del([distFolderName, 'node_modules', 'bower_components'], function (err, paths) {
-        console.log('Deleted folder dist');
+    $.del([distFolderName, 'dist', 'node_modules', 'bower_components'], function (err, paths) {
+        console.log('Deleted folder '+distFolderName);
     });
+});
+
+
+///////////////////////////////////////////////////////
+// Process Task ful Value of uglyfi files js and css //
+///////////////////////////////////////////////////////
+gulp.task('build-full',function(){
+    ugly_minify = false;
+    ENV = distribution;
+
+    $.runSequence(['js', 'build-clear-less', 'less','assets'], 'bower', 'injectBowerDep');
+});
+
+
+gulp.task('build',function(){
+	ENV = distribution;
+    $.runSequence(['js', 'build-clear-less', 'less','assets'], 'bower', 'injectBowerDep');
 });
 
 
@@ -261,15 +352,6 @@ gulp.task('clear-all',function(){
 // main Tasks //
 ////////////////
 gulp.task('default',function(){
-    // var a = gulp.src("custom-bower-main.js").pipe($.include());
-
-    // console.log(a.test_variable);
-    $.runSequence(['js','less','assets'], 'bower', 'html', 'connect', 'watch');
+    distFolderName = 'dist';
+    $.runSequence(['js', 'build-clear-less', 'less', 'assets'], 'bower', 'html', 'connect', 'watch');
 });
-
-
-gulp.task('build',function(){
-    $.runSequence(['js','less','assets'], 'bower', 'injectBowerDep');
-});
-
-
