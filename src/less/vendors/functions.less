@@ -1,0 +1,131 @@
+/*
+ * This function create the attributes class acces with the bootstrap media grid
+ *
+ * @param select string class selector
+ * @param type string attribute name
+ * @param value string attribute value
+ */
+.media-attr(@select, @type, @value){
+	/* Extra small devices (phones, less than 768px) */
+	/* No media query since this is the default in Bootstrap */
+	.@{select}{ @{type}: @value; }
+	.@{select}-xs{ @{type}: @value; }
+	/* Small devices (tablets, 768px and up) */
+	@media (min-width: @screen-sm-min){ .@{select}-sm{ @{type}: @value; } }
+	/* Medium devices (desktops, 992px and up) */
+	@media (min-width: @screen-md-min) { .@{select}-md{ @{type}: @value; } }
+	/* Large devices (large desktops, 1200px and up) */
+	@media (min-width: @screen-lg-min) { .@{select}-lg{ @{type}: @value; } }
+}
+
+/*
+ * This function create the attributes class acces with the bootstrap media grid in xs
+ *
+ * @param select string class selector
+ * @param type string attribute name
+ * @param value string attribute value
+ */
+.media-xs-attr(@select, @type, @value){
+	/* Extra small devices (phones, less than 768px) */
+	/* No media query since this is the default in Bootstrap */
+	.@{select}{ @{type}: @value; }
+	.@{select}-xs{ @{type}: @value; }
+}
+
+/*
+ * This function create the attributes class acces with the bootstrap media grid in md
+ *
+ * @param select string class selector
+ * @param type string attribute name
+ * @param value string attribute value
+ */
+.media-xs-attr(@select, @type, @value){
+	/* Small devices (tablets, 768px and up) */
+	@media (min-width: @screen-sm-min){ .@{select}-sm{ @{type}: @value; } }
+}
+
+/*
+ * This function create the attributes class acces with the bootstrap media grid in md
+ *
+ * @param select string class selector
+ * @param type string attribute name
+ * @param value string attribute value
+ */
+.media-md-attr(@select, @type, @value){
+	/* Medium devices (desktops, 992px and up) */
+	@media (min-width: @screen-md-min) { .@{select}-md{ @{type}: @value; } }
+}
+
+/*
+ * This function create the attributes class acces with the bootstrap media grid in lg
+ *
+ * @param select string class selector
+ * @param type string attribute name
+ * @param value string attribute value
+ */
+.media-lg-attr(@select, @type, @value){
+	/* Large devices (large desktops, 1200px and up) */
+	@media (min-width: @screen-lg-min) { .@{select}-lg{ @{type}: @value; } }
+}
+
+/*
+ * This function create the clear attributes by number
+ *
+ * @param n int limit
+ * @param type string attribute name
+ * @param impt string use important
+ */
+.attr-loop(@n, @type, @impt: ~'', @i: 0) when (@i =< @n) {
+	.@{type}-@{i}{ @{type}: @i * 1px@impt; } 
+	.attr-loop(@n, @type, @impt, (@i + 1));
+}
+
+/*
+ * This function create the clear attributes by number with the bootstrap media grid accesor
+ *
+ * @param n int limit
+ * @param type string attribute name
+ * @param impt string use important
+ */
+.media-attr-loop(@n, @type, @impt:~'', @i: 0) when (@i =< @n){
+	.media-attr(~"@{type}-@{i}", @type,  @i * 1px@impt);
+	.media-attr-loop(@n, @type, @impt, (@i + 1));
+}
+
+/*
+ * This function create the clear attributes by number with the bootstrap media grid accesor in groups
+ *
+ * @param n int limit
+ * @param type string attribute name
+ * @param impt string use important
+ */
+.media-attr-loop-array(@n, @types, @impt:~''){
+
+	//XS
+	.for(@types); .-each(@type) {
+		.attr-loop(@n, ~"@{type}", @impt);		
+		.attr-loop(@n, ~"@{type}-xs", @impt);		
+    }
+
+	//SM
+	@media (min-width: @screen-sm-min){
+		.for(@types); .-each(@type) {
+			.attr-loop(@n, ~"@{type}-sm", @impt);		
+	    }
+	}
+
+	//MD
+	@media (min-width: @screen-md-min){
+		.for(@types); .-each(@type) {
+			.attr-loop(@n, ~"@{type}-md", @impt);		
+	    }
+	}
+
+	//LG
+	@media (min-width: @screen-lg-min){
+		.for(@types); .-each(@type) {
+			.attr-loop(@n, ~"@{type}-lg", @impt);		
+	    }
+	}
+}
+

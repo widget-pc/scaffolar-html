@@ -1,0 +1,48 @@
+/* Clear margin and padding */
+a, p, h1, h2, h3, h4, h5, h6, ul, li, html, body, hr{
+	margin: 0;
+	padding: 0;
+}
+
+h1{ font-size: @h1-size; }
+h2{ font-size: @h2-size; }
+h3{ font-size: @h3-size; }
+h4{ font-size: @h4-size; }
+h5{ font-size: @h5-size; }
+h6{ font-size: @h6-size; }
+
+/* BEGIN: CLEAR BOOTSTRAP PADDING */
+.row{
+	margin-left: 0 !important;
+	margin-right: 0 !important;
+}
+
+div[class*="col-"]{
+	padding-left: 0 !important;
+	padding-right: 0 !important;
+}
+/* END: CLEAR BOOTSTRAP PADDING */
+
+/* BEGIN: Default link style */
+a{
+	text-decoration: none;
+	&:hover{ text-decoration: none; }
+	&:focus {
+	  outline: thin dotted !important;
+	  outline: 0px auto -webkit-focus-ring-color!important;
+	  outline-offset: 0px!important;
+	  outline: 0!important;
+	}
+}
+/* END: Default link style */
+
+/* BEGIN: Helpers */
+.truncate {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+/* END: Helpers */
+
+/* BEGIN: List */
+li{ list-style-type: none; }
