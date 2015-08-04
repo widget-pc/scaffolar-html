@@ -3,6 +3,16 @@
 @import "vendors/for.less";
 @import "vendors/functions.less";
 
+/* This produce 
+ * .media-attr(class, property, value);
+ * 		.class{ property: value;}
+ *		.class-xs{ property: value;}
+ *		.class-sm{ property: value;}
+ *		.class-md{ property: value;}
+ *		.class-lg{ property: value;}
+*/
+
+
 /*
  * Util to inline and inline-block labels: Vertical
  */
@@ -12,6 +22,7 @@
 .media-attr(vertical-sub, vertical-align, sub);
 .media-attr(vertical-top, vertical-align, top);
 .media-attr(vertical-text-top, vertical-align, text-top);
+
 
 /*
  * Text-aling
@@ -39,5 +50,6 @@
  * Attributes by number and break point
  */
 @types: font-size, height, padding, padding-top, padding-right, padding-bottom, padding-left, margin-top, margin-right, margin-bottom, margin-left, text-indent;
+
 .media-attr-loop-array(100, @types);
 //.media-attr-loop(100, padding-left, ~'!important');
