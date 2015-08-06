@@ -15,6 +15,12 @@ var development = 'DEV',        			// Development's tag name
 // Overrides Bower Main Array //
 ////////////////////////////////
 var overridesComp = {
+    bootstrap: {
+        main: [
+            "./dist/js/bootstrap.js",
+            "./dist/css/bootstrap.css"
+        ]
+    }
 };
 
 //////////////////////////
@@ -45,7 +51,7 @@ function processJS(path, name){
 		.pipe($.rename({ suffix: '.min' }))
 		.pipe($.if(isDevelopment(), $.sourcemaps.write()))
 		.pipe(gulp.dest(distFolderName+'/js'));
-		
+
 		if(isDevelopment())
         	$.browserSync.reload();
 };
@@ -159,7 +165,7 @@ gulp.task('images', function(){
 
     var files = $.mainBowerFiles();
     files.push('src/assets/images/**/*.{png,jpg,jpeg,svg,gif}');
-	
+
     var source = gulp.src(files)
         .pipe($.plumber())
         .pipe($.filter('**/*.{png,jpg,jpeg,svg,gif}'))
@@ -184,7 +190,7 @@ gulp.task('icons', function(){
     	.pipe($.plumber())
     	.pipe($.size())
         .pipe(gulp.dest(distFolderName+'/icons'));
-        
+
         if(isDevelopment())
         	$.browserSync.reload();
 });
@@ -197,7 +203,7 @@ gulp.task('files', function(){
     	.pipe($.plumber())
     	.pipe($.size())
         .pipe(gulp.dest(distFolderName+'/files'));
-        
+
         if(isDevelopment())
         	$.browserSync.reload();
 });
@@ -219,7 +225,7 @@ gulp.task('html', function(){
     	.pipe($.plumber())
     	.pipe($.size())
         .pipe(gulp.dest('./'+distFolderName));
-        
+
         if(isDevelopment())
         	$.browserSync.reload();
 });
@@ -279,7 +285,7 @@ gulp.task('connect', function(){
     $.browserSync({
         server:{
             baseDir: ['src', distFolderName],
-            routes: routes 
+            routes: routes
         }
     });
 });
