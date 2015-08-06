@@ -10,6 +10,7 @@ h3{ font-size: @h3-size; }
 h4{ font-size: @h4-size; }
 h5{ font-size: @h5-size; }
 h6{ font-size: @h6-size; }
+p{ font-size: @p-size; }
 
 /* BEGIN: CLEAR BOOTSTRAP PADDING */
 .row{
@@ -46,3 +47,23 @@ a{
 
 /* BEGIN: List */
 li{ list-style-type: none; }
+
+
+/*********************************/
+/* columns of same height styles */
+/*********************************/
+.container-same-height{
+	display: table;	
+}
+
+.container-same-height > .row{
+	display: table;
+	width: 100%;
+	table-layout: fixed;
+}
+
+.container-same-height > .row > div[class*="col-"]{
+	height: 100%;
+	display: table-cell;
+	float: none !important;
+}
