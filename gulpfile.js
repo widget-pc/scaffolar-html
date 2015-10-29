@@ -13,7 +13,7 @@ var development = 'DEV',        			// Development's tag name
 
 ////////////////////////////////
 // Overrides Bower Main Array //
-////////////////////////////////
+////////////////////////////////image
 var overridesComp = {
     bootstrap: {
         main: [
@@ -35,7 +35,7 @@ var gulp = require('gulp');
 var wiredep = require('wiredep').stream;
 
 var $ = require('gulp-load-plugins')({
-    pattern: ['gulp-*','del', 'browser-sync', 'main-bower-files','bower', 'imagemin-pngquant']
+    pattern: ['gulp-*','del', 'browser-sync', 'main-bower-files','bower']
 });
 
 
