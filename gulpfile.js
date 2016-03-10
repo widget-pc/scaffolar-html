@@ -1,5 +1,5 @@
 /* Desarrollado por Widget Personal Computer C.A. */
-/* VERTION: 0.5.0 */
+/* VERTION: 0.5.1 */
 
 //////////////////////
 // Convention names //
@@ -35,7 +35,7 @@ var gulp = require('gulp');
 var wiredep = require('wiredep').stream;
 
 var $ = require('gulp-load-plugins')({
-    pattern: ['gulp-*','del', 'browser-sync', 'main-bower-files','bower', 'imagemin-pngquant']
+    pattern: ['gulp-*','del', 'browser-sync', 'main-bower-files','bower']
 });
 
 
