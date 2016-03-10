@@ -13,7 +13,7 @@ var development = 'DEV',        			// Development's tag name
 
 ////////////////////////////////
 // Overrides Bower Main Array //
-////////////////////////////////
+////////////////////////////////image
 var overridesComp = {
     bootstrap: {
         main: [
