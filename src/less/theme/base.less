@@ -1,10 +1,13 @@
 /* Clear margin and padding */
-a, p, h1, h2, h3, h4, h5, h6, ul, li, html, body, hr{
+a, p, h1, h2, h3, h4, h5, h6, ul, li, html, hr{
 	margin: 0;
 	padding: 0;
 }
 
-h1{ font-size: @h1-size; }
+h1{ 
+	font-size: @h1-size; 
+	
+}
 h2{ font-size: @h2-size; }
 h3{ font-size: @h3-size; }
 h4{ font-size: @h4-size; }
@@ -34,6 +37,7 @@ a{
 	  outline-offset: 0px!important;
 	  outline: 0!important;
 	}
+	outline: 0!important;
 }
 /* END: Default link style */
 
@@ -66,4 +70,8 @@ li{ list-style-type: none; }
 	height: 100%;
 	display: table-cell;
 	float: none !important;
+}
+
+.hide-overflow{
+	overflow: hidden;
 }

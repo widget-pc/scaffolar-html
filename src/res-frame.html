@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Test</title>
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="author" content="">
+
+    <!-- styles -->
+    <!-- build:css css/bower-style.css -->
+    <!-- bower:css -->
+    <link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="../bower_components/font-awesome/css/font-awesome.css" />
+    <link rel="stylesheet" href="../bower_components/bootstrap-select/dist/css/bootstrap-select.css" />
+    <link rel="stylesheet" href="../bower_components/bootstrap-fileinput/css/fileinput.min.css" />
+    <link rel="stylesheet" href="../bower_components/hover/css/hover.css" />
+    <link rel="stylesheet" href="../bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css" />
+    <link rel="stylesheet" href="../bower_components/bootstrap-multiselect/dist/css/bootstrap-multiselect.css" />
+    <link rel="stylesheet" href="../bower_components/slippry/dist/slippry.css" />
+    <link rel="stylesheet" href="../bower_components/iCheck/skins/flat/_all.css" />
+    <!-- endbower -->
+    <!-- endbuild -->
+    <link rel="stylesheet" href="css/vendors.min.css">
+    <link rel="stylesheet" href="css/theme.min.css">
+
+    <!--[if lt IE 9]>
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+</head>
+<body>
+	<div class="responsive-bar">
+		<div class="choose">
+			<span class="bar-title">Choose Device</span>
+			<span class="icons">
+				<a href="#" screen-width="480px"><i class="fa fa-mobile-phone"></i></a>
+				<a href="#" screen-width="768px"><i class="fa fa-tablet"></i></a>
+				<a href="#" screen-width="100%" class="active"><i class="fa fa-tv"></i></a>
+			</span>
+		</div>
+		
+		<div class="logo">
+			<img src="images/simbol-color-small.png" alt="">			
+		</div>
+
+		<div class="menu">
+			<!-- http://silviomoreto.github.io/bootstrap-select/options/ -->
+			<select class="selectpicker" id="files-menu">
+				<option value="index.html">Principal</option>
+			</select>
+		</div>
+	</div>
+
+	<div class="responsive-container">
+		<iframe src="index.html" frameborder="0" class="main-iframe"></iframe>		
+	</div>
+    <!-- scripts -->
+    <!-- build:js js/bower-script.js -->
+    <!-- bower:js -->
+    <script src="../bower_components/jquery/dist/jquery.js"></script>
+    <script src="../bower_components/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="../bower_components/zeroclipboard/dist/ZeroClipboard.js"></script>
+    <script src="../bower_components/bootstrap-select/dist/js/bootstrap-select.js"></script>
+    <script src="../bower_components/bootstrap-fileinput/js/fileinput.min.js"></script>
+    <script src="../bower_components/moment/moment.js"></script>
+    <script src="../bower_components/moment-timezone/builds/moment-timezone-with-data-2010-2020.js"></script>
+    <script src="../bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="../bower_components/covervid/covervid.js"></script>
+    <script src="../bower_components/bootstrap-multiselect/dist/js/bootstrap-multiselect.js"></script>
+    <script src="../bower_components/slippry/dist/slippry.min.js"></script>
+    <script src="../bower_components/iCheck/icheck.min.js"></script>
+    <!-- endbower -->
+    <!-- endbuild -->
+    <script src="js/vendors.min.js"></script>
+
+<script>
+
+
+	// http://lab.maltewassermann.com/viewport-resizer/
+	// http://themes.fuelthemes.net/?theme=thevoux
+	// http://ryanve.com/lab/dimensions/
+	var mainContainer = null;
+	var anchors = null;
+	var barHeight = 60;
+
+	$(document).ready(function(){
+
+		var height = $(window).height();
+				
+		/* Search Components */
+	    mainContainer = $('.responsive-container');
+	    anchors = $('.responsive-bar .icons a');
+
+	    mainContainer.css('height', (height - barHeight - 3)+"px" );
+	    
+	    anchors.click(function(){
+	    	var current = $(this);
+	    	var w = current.attr("screen-width");
+
+	    	if(mainContainer != null)
+	    		mainContainer.css('width', w);
+
+	    	anchors.removeClass('active');
+	    	current.addClass('active');
+		});
+
+		$('.selectpicker').selectpicker({
+			"style": 'btn-default fixed-paddin',
+			"size": 4
+		});
+
+	    
+	});
+
+
+
+</script>
+
+</body>
+</html>

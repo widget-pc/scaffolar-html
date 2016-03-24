@@ -9,13 +9,13 @@
 	/* Extra small devices (phones, less than 768px) */
 	/* No media query since this is the default in Bootstrap */
 	.@{select}{ @{type}: @value; }
-	.@{select}-xs{ @{type}: @value; }
+	@media (max-width: @screen-xs-max){ .@{select}-xs{ @{type}: @value; } }
 	/* Small devices (tablets, 768px and up) */
-	@media (min-width: @screen-sm-min){ .@{select}-sm{ @{type}: @value; } }
+	@media (min-width: @screen-sm) and (max-width: @screen-sm-max){ .@{select}-sm{ @{type}: @value; } }
 	/* Medium devices (desktops, 992px and up) */
-	@media (min-width: @screen-md-min) { .@{select}-md{ @{type}: @value; } }
+	@media (min-width: @screen-md) and (max-width: @screen-md-max){ .@{select}-md{ @{type}: @value; } }
 	/* Large devices (large desktops, 1200px and up) */
-	@media (min-width: @screen-lg-min) { .@{select}-lg{ @{type}: @value; } }
+	@media (min-width: @screen-lg-min){ .@{select}-lg{ @{type}: @value; } }
 }
 
 /*
@@ -29,7 +29,10 @@
 	/* Extra small devices (phones, less than 768px) */
 	/* No media query since this is the default in Bootstrap */
 	.@{select}{ @{type}: @value; }
-	.@{select}-xs{ @{type}: @value; }
+
+	@media (max-width: @screen-xs-max){
+		.@{select}-xs{ @{type}: @value; }
+	}
 }
 
 /*
@@ -39,9 +42,9 @@
  * @param type string attribute name
  * @param value string attribute value
  */
-.media-xs-attr(@select, @type, @value){
+.media-sm-attr(@select, @type, @value){
 	/* Small devices (tablets, 768px and up) */
-	@media (min-width: @screen-sm-min){ .@{select}-sm{ @{type}: @value; } }
+	@media (min-width: @screen-sm) and (max-width: @screen-sm-max){ .@{select}-sm{ @{type}: @value; } }
 }
 
 /*
@@ -53,7 +56,7 @@
  */
 .media-md-attr(@select, @type, @value){
 	/* Medium devices (desktops, 992px and up) */
-	@media (min-width: @screen-md-min) { .@{select}-md{ @{type}: @value; } }
+	@media (min-width: @screen-md) and (max-width: @screen-md-max){ .@{select}-md{ @{type}: @value; } }
 }
 
 /*
@@ -75,9 +78,9 @@
  * @param type string attribute name
  * @param impt string use important
  */
-.attr-loop(@n, @type, @impt: ~'', @i: 0) when (@i =< @n) {
-	.@{type}-@{i}{ @{type}: @i * 1px@impt; } 
-	.attr-loop(@n, @type, @impt, (@i + 1));
+.attr-loop(@n, @selector, @type, @impt: ~'', @i: 0, @s: 5) when (@i =< @n) {
+	.@{selector}-@{i}{ @{type}: @i * 1px@impt; } 
+	.attr-loop(@n, @selector, @type, @impt, (@i + @s));
 }
 
 /*
@@ -101,30 +104,36 @@
  */
 .media-attr-loop-array(@n, @types, @impt:~''){
 
-	//XS
-	.for(@types); .-each(@type) {
-		.attr-loop(@n, ~"@{type}", @impt);		
-		.attr-loop(@n, ~"@{type}-xs", @impt);		
+	//ALL
+	.for(@types); .-each(@property) {
+		.attr-loop(@n, ~"@{property}", @property, @impt);		
     }
 
+    //XS 
+    @media (max-width: @screen-xs-max){
+		.for(@types); .-each(@property){
+			.attr-loop(@n, ~"@{property}-xs", @property, @impt);		
+	    }
+	}
+
 	//SM
-	@media (min-width: @screen-sm-min){
-		.for(@types); .-each(@type) {
-			.attr-loop(@n, ~"@{type}-sm", @impt);		
+	@media (min-width: @screen-sm) and (max-width: @screen-sm-max){
+		.for(@types); .-each(@property) {
+			.attr-loop(@n, ~"@{property}-sm", @property, @impt);		
 	    }
 	}
 
 	//MD
-	@media (min-width: @screen-md-min){
-		.for(@types); .-each(@type) {
-			.attr-loop(@n, ~"@{type}-md", @impt);		
+	@media (min-width: @screen-md) and (max-width: @screen-md-max){
+		.for(@types); .-each(@property) {
+			.attr-loop(@n, ~"@{property}-md", @property, @impt);		
 	    }
 	}
 
 	//LG
 	@media (min-width: @screen-lg-min){
-		.for(@types); .-each(@type) {
-			.attr-loop(@n, ~"@{type}-lg", @impt);		
+		.for(@types); .-each(@property) {
+			.attr-loop(@n, ~"@{property}-lg", @property, @impt);		
 	    }
 	}
 }
